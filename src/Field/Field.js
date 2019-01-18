@@ -1,15 +1,15 @@
 import React, { Component } from 'react';
-// import './Field.css';
+import './Field.css';
 
 class Field extends Component {
 	render() {
 		var value = this.props.value;
 		if(!value) {
-			value = " ";
+			value = "";
 		} 
 
 		return(
-			<span className="field">{ value }</span>
+			<td className="game-board__field" value={ value }>{ value }</td>
 		);
 	}
 }

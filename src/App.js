@@ -21,19 +21,21 @@ class App extends Component {
   render() {
     return (
       <div className="App">
+        <header className="header"> 
+          <div className='score-wrap'>
+            <div className='score'>
+              <span className='score__title'>Current</span>
+              <span className='score__count'>{this.currentCount || 0}</span>
+            </div>
+            <div className='score'>
+              <span className='score__title'>Best</span>
+              <span className='score__count'>{this.bestCount || 0}</span>
+            </div>
+          </div>  
 
-        <div className='score-wrap'>
-          <div className='score current-score'>
-            <span className='score__title'>Best</span>
-            <span className='score__count'>{this.currentCount}</span>
-          </div>
-          <div className='score best-score'>
-            <span className='score__title'>Current</span>
-            <span className='score__count'>{this.bestCount}</span>
-          </div>
-        </div>  
-
-        <button className='btn btn__ng-game'>New Game</button>
+          <button className='btn'>New Game</button>
+        </header>
+        
 
         <GameBoard setScore={ this.getScore }></GameBoard> 
       </div>
