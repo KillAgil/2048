@@ -9,9 +9,18 @@ class App extends Component {
     this.state = {
       currentCount: 0, 
       bestCount: 0,
+      game: false,
     };
-
+    this.handleClickGame = this.handleClickGame.bind(this);
     this.getScore = this.getScore.bind(this);
+  }
+
+  handleClickGame() {
+    console.log('App - handleClickGame');
+
+    this.setState({
+      game: true,
+    });
   }
 
   getScore(score) {
@@ -33,11 +42,11 @@ class App extends Component {
             </div>
           </div>  
 
-          <button className='btn'>New Game</button>
+          <button className='btn' onClick={ this.handleClickGame }>New Game</button>
         </header>
         
 
-        <GameBoard setScore={ this.getScore }></GameBoard> 
+        <GameBoard setScore={ this.getScore } game={ this.state.game }></GameBoard> 
       </div>
     );
   }
