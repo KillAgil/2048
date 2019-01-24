@@ -3,26 +3,106 @@ import Field from '../Field/Field.js';
 import './GameBoard.css';
 
 function createRandomField() {
-	var fields = []; 
+	var field = []; 
 	var value;
 	var x =  Math.floor(Math.random() * (3 - 0)) + 0;
 	var y =  Math.floor(Math.random() * (3 - 0)) + 0;
-	var coordinates = x+"."+y;
-
-	if(fields[0] === coordinates) coordinates = (x-1)+"."+y ;
 
 	(Math.random() * (100 - 1) + 1 < 90) ? value = 2 : value = 4;
 
-	fields.push(coordinates + ';' + value);
+	field.push(x, y, value);
 
-	console.log('GameBoard - createRandomField || fields', fields);
+	console.log('GameBoard - createRandomField || fields', field);
 
-	return fields;	
+	return field;	
+}
+
+function handlePressArrow(e) {
+	if(this.props.game && this.state.ng === -1 && e.key.indexOf("Arrow") === 0) {
+		console.log("GameBoard - handlePressArrow || e.key: ", e.key);
+		var newFields = this.state.fields.concat();
+		moveFields(e.key, newFields);
+
+		this.setState({
+			fields: newFields,
+		});
+	} else {
+		console.log("GameBoard - handlePressArrow __ good try )");
+	}
 }
 
 
+function moveFields(direction, fields) {
+	var current, i, j, c, wasSwap;
+// Somebody can think about this!!! I can do this with sorting support !!!
+	if(direction === 'ArrowUp'){
+		for(i = 3; i >= 0; i--) {
+			for(j = 3; j >= 0; j--){
+				wasSwap = false;
+				for(c = j-1; c >= 0; c--){
+					if(fields[i][j] && !fields[i][c]){
+						current = fields[i][j];
+						fields[i][j] = 0;
+						fields[i][c] = current;
+					} else {
+						wasSwap = true;
+					}
+				}
+				if(!wasSwap) break;
+			}
+		}
+	} 
+	else if(direction === 'ArrowDown') {
+		for(i = 0; i <= 3; i++) {
+			for(j = 0; j <= 3; j++){
+				wasSwap = false;
+				for(c = j+1; c <= 3; c++){
+					if(fields[i][j] && !fields[i][c]){
+						current = fields[i][j];
+						fields[i][j] = 0;
+						fields[i][c] = current;
+					} else {
+						wasSwap = true;
+					}
+				}
+				if(!wasSwap) break;
+			} 
+		}
+	} else if(direction === 'ArrowRight') {
+		for(i = 0; i <= 3; i++) {
+			for(j = 0; j <= 3; j++){
+				wasSwap = false;
+				for(c = j+1; c <= 3; c++){
+					if(fields[j][i] && !fields[c][i]){
+						current = fields[j][i];
+						fields[j][i] = 0;
+						fields[c][i] = current;
+					} else {
+						wasSwap = true;
+					}
+				}
+				if(!wasSwap) break;
+			} 
+		}
+	} else {
+		for(i = 3; i >= 0; i--) {
+			for(j = 3; j >= 0; j--){
+				wasSwap = false;
+				for(c = j-1; c >= 0; c--){
+					if(fields[j][i] && !fields[c][i]){
+						current = fields[j][i];
+						fields[j][i] = 0;
+						fields[c][i] = current;
+					} else {
+						wasSwap = true;
+					}
+				}
+				if(!wasSwap) break;
+			}
+		}
+	}
+}
 class GameBoard extends Component {
-	test = false;
 	constructor(props) {
 		super(props);
 
@@ -35,6 +115,9 @@ class GameBoard extends Component {
 								[ 0, 0, 0, 0 ],
 							],		
 		};
+		handlePressArrow = handlePressArrow.bind(this);
+
+		document.addEventListener('keydown', handlePressArrow);
 	}
 
 	shouldComponentUpdate() {
@@ -48,27 +131,29 @@ class GameBoard extends Component {
 		}
 		return true;
 	}
+
 	componentDidUpdate() {
 		console.log('GameBoard - componentDidUpdate || props.game && state.ng\n', this.props.game + " && " + this.state.ng);
-		var fields;
 
-		// This look like that, because stage "shouldComponentUpdate" after press "New Game" was loopsing.  
-
-		if (this.props.game && this.state.ng === -1) {
-			// state "on"(true && -1)
-			fields = createRandomField();
-
-		} else if(this.props.game && this.state.ng === 1){
+		if(this.props.game && this.state.ng === 1){
 			// transition from "begin"(true && 1) to "on"(true && -1)
-			fields = createRandomField();
+			var fields = this.state.fields.concat();
+			var first = createRandomField();
+			var second = createRandomField();
+
+			if(first[0] === second[0] && first[1] === second[1]) {
+				second[0]--;
+			}
+
+			fields[first[0]][first[1]] = first[2];
+			fields[second[0]][second[1]] = second[2];
+
+			console.log(fields);
 			this.setState({
 				ng: -1,
-			})	
+				fields: fields,
+			});	
 		}
-	}
-
-	arrowPress(event) {
-		console.log("GameBoard - arrowPress || event.key: ", event.key);
 	}
 
 	render() {
@@ -121,7 +206,5 @@ class GameBoard extends Component {
 		);
 	}
 }
-
-
 
 export default GameBoard;

@@ -1,4 +1,6 @@
 .game-board__field {
+	width: 110px;
+	height: 110px;
 	border: 10px solid #8f7a66;
 	border-radius: 5px; 
 	text-align: center;
