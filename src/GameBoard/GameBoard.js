@@ -42,7 +42,7 @@ function handlePressArrow(e) {
 
 		while(newFields[field[0]][field[1]] !== 0) {
 			console.log("GameBoard - handlePressArrow || again");
-			if (counter === 1) { // temporarily
+			if (counter === 15) { // temporarily
 				break;
 			}
 			field = createRandomField();
@@ -50,7 +50,7 @@ function handlePressArrow(e) {
 		} 
 
 		// temporarily
-		if(counter === 1) {
+		if(counter === 15) {
 			alert('You lose'); 
 			this.setState({
 				ng: 0,
