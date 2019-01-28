@@ -5,8 +5,8 @@ import './GameBoard.css';
 function createRandomField() {
 	var field = []; 
 	var value;
-	var x =  Math.floor(Math.random() * (3 - 0)) + 0;
-	var y =  Math.floor(Math.random() * (3 - 0)) + 0;
+	var x =  Math.floor(Math.random() * (4 - 0)) + 0;
+	var y =  Math.floor(Math.random() * (4 - 0)) + 0;
 
 	(Math.random() * (100 - 1) + 1 < 90) ? value = 2 : value = 4;
 
@@ -19,89 +19,184 @@ function createRandomField() {
 
 function handlePressArrow(e) {
 	if(this.props.game && this.state.ng === -1 && e.key.indexOf("Arrow") === 0) {
+		console.log();
+		// console.log("GameBoard - handlePressArrow || oldFields", this.state.fields);
 		console.log("GameBoard - handlePressArrow || e.key: ", e.key);
 		var newFields = this.state.fields.concat();
 		moveFields(e.key, newFields);
+		var field = createRandomField();
 
+		while(newFields[field[0]][field[1]] !== 0) {
+			console.log("GameBoard - handlePressArrow || again");
+			field = createRandomField();
+		} 
+
+		newFields[field[0]][field[1]] = field[2];
+		console.log("GameBoard - handlePressArrow || newFields", newFields);
 		this.setState({
 			fields: newFields,
 		});
-	} else {
-		console.log("GameBoard - handlePressArrow __ good try )");
 	}
 }
 
-
 function moveFields(direction, fields) {
-	var current, i, j, c, wasSwap;
-// Somebody can think about this!!! I can do this with sorting support !!!
+	var current, i, j, c, check,
+			counter = [],
+			elements = [], 
+			skip = [];
+
 	if(direction === 'ArrowUp'){
 		for(i = 3; i >= 0; i--) {
+			counter[i] = 0;
+			elements = [];
 			for(j = 3; j >= 0; j--){
-				wasSwap = false;
-				for(c = j-1; c >= 0; c--){
-					if(fields[i][j] && !fields[i][c]){
-						current = fields[i][j];
-						fields[i][j] = 0;
-						fields[i][c] = current;
-					} else {
-						wasSwap = true;
+				current = fields[j][i];
+				check = elements.indexOf(current);
+				if( check === -1 && current) {
+					elements.push(current);
+				} else if(check !== -1 && current) {
+					counter[i]++;
+					elements.splice(check, 1);
+				}
+			} 
+			console.log("i: ", i, " elements ", elements, " counter ", counter);
+			(counter[i] || elements.length) ? skip[i] = false : skip[i] = true;
+		}
+
+		console.log("skip\n",skip);
+		for(i = 3; i >= 0; i--) {
+			if (skip[i]) {
+				continue;
+			}
+			for(j = 3; j >= 0; j--){
+				for(c = 3; c > 0; c--){
+					current = fields[c][i];
+					if(current && current === fields[c-1][i] && counter[i]) {
+						fields[c][i] = 0;
+						fields[c-1][i] = fields[c-1][i] * 2;
+						counter[i]--;
+					} else if(current && !fields[c-1][i]){
+						fields[c][i] = 0;
+						fields[c-1][i] = current;
 					}
 				}
-				if(!wasSwap) break;
 			}
 		}
-	} 
-	else if(direction === 'ArrowDown') {
+	} else if(direction === 'ArrowDown') {
+
 		for(i = 0; i <= 3; i++) {
+			counter[i] = 0;
+			elements = [];
 			for(j = 0; j <= 3; j++){
-				wasSwap = false;
-				for(c = j+1; c <= 3; c++){
-					if(fields[i][j] && !fields[i][c]){
-						current = fields[i][j];
-						fields[i][j] = 0;
-						fields[i][c] = current;
-					} else {
-						wasSwap = true;
+				current = fields[j][i];
+				check = elements.indexOf(current);
+				if( check === -1 && current) {
+					elements.push(current);
+				} else if(check !== -1 && current) {
+					counter[i]++;
+					elements.splice(check, 1);
+				}
+			} 
+			console.log("i: ", i, " elements ", elements, " counter ", counter);
+			(counter[i] || elements.length) ? skip[i] = false : skip[i] = true;
+		}
+
+		console.log("skip\n",skip);
+		for(i = 0; i <= 3; i++) {
+			if (skip[i]) {
+				continue;
+			}
+			for(j = 0; j <= 3; j++){
+				for(c = 0; c < 3; c++){
+					current = fields[c][i];
+					if(current && current === fields[c+1][i] && counter[i]) {
+						fields[c][i] = 0;
+						fields[c+1][i] = fields[c+1][i] * 2;
+						counter[i]--;
+					} else if(current && !fields[c+1][i]){
+						fields[c][i] = 0;
+						fields[c+1][i] = current;
 					}
 				}
-				if(!wasSwap) break;
 			} 
 		}
 	} else if(direction === 'ArrowRight') {
+
 		for(i = 0; i <= 3; i++) {
+			counter[i] = 0;
+			elements = [];
 			for(j = 0; j <= 3; j++){
-				wasSwap = false;
-				for(c = j+1; c <= 3; c++){
-					if(fields[j][i] && !fields[c][i]){
-						current = fields[j][i];
-						fields[j][i] = 0;
-						fields[c][i] = current;
-					} else {
-						wasSwap = true;
+				current = fields[i][j];
+				check = elements.indexOf(current);
+				if( check === -1 && current) {
+					elements.push(current);
+				} else if(check !== -1 && current) {
+					counter[i]++;
+					elements.splice(check, 1);
+				}
+			} 
+			console.log("i: ", i, " elements ", elements, " counter ", counter);
+			(counter[i] || elements.length) ? skip[i] = false : skip[i] = true;
+		}
+		console.log("skip\n",skip);
+		for(i = 0; i <= 3; i++) {
+			if (skip[i]) {
+				continue;
+			}
+			for(j = 0; j <= 3; j++){
+				for(c = 0; c < 3; c++){
+					current = fields[i][c];
+					if(current && current === fields[i][c+1] && counter[i]) {
+						fields[i][c] = 0;
+						fields[i][c+1] = fields[i][c+1] * 2;
+						counter[i]--;
+					} else if(current && !fields[i][c+1]){
+						fields[i][c] = 0;
+						fields[i][c+1] = current;
 					}
 				}
-				if(!wasSwap) break;
-			} 
+			}
 		}
 	} else {
 		for(i = 3; i >= 0; i--) {
+			counter[i] = 0;
+			elements = [];
 			for(j = 3; j >= 0; j--){
-				wasSwap = false;
-				for(c = j-1; c >= 0; c--){
-					if(fields[j][i] && !fields[c][i]){
-						current = fields[j][i];
-						fields[j][i] = 0;
-						fields[c][i] = current;
-					} else {
-						wasSwap = true;
-					}
+				current = fields[i][j];
+				check = elements.indexOf(current);
+				if( check === -1 && current) {
+					elements.push(current);
+				} else if(check !== -1 && current) {
+					counter[i]++;
+					elements.splice(check, 1);
 				}
-				if(!wasSwap) break;
+			} 
+			console.log("i: ", i, " elements ", elements, " counter ", counter);
+			(counter[i] || elements.length) ? skip[i] = false : skip[i] = true;
+		}
+
+		console.log("skip\n",skip);
+		for(i = 3; i >= 0; i--) {
+			if (skip[i]) {
+				continue;
+			}
+			for(j = 3; j >= 0; j--){
+				for(c = 3; c > 0; c--){
+					current = fields[i][c];
+					if(current && current === fields[i][c-1] && counter[i]) {
+						fields[i][c] = 0;
+						fields[i][c-1] = fields[i][c-1] * 2;
+						counter[i]--;
+					} else if(current && !fields[i][c-1]){
+						fields[i][c] = 0;
+						fields[i][c-1] = current;
+					} 
+				}
 			}
 		}
 	}
 }
+
 class GameBoard extends Component {
 	constructor(props) {
 		super(props);
@@ -121,7 +216,8 @@ class GameBoard extends Component {
 	}
 
 	shouldComponentUpdate() {
-		console.log('GameBoard - shouldComponentUpdate || props.game && state.ng\n', this.props.game + " && " + this.state.ng);
+		// console.log('GameBoard - shouldComponentUpdate || props.game && state.ng\n', this.props.game + " && " + this.state.ng);
+
 		if(!this.props.game && !this.state.ng) {
 			// "!this.props.game", because props didn't already update yet.    
 			this.setState({
@@ -133,7 +229,7 @@ class GameBoard extends Component {
 	}
 
 	componentDidUpdate() {
-		console.log('GameBoard - componentDidUpdate || props.game && state.ng\n', this.props.game + " && " + this.state.ng);
+		// console.log('GameBoard - componentDidUpdate || props.game && state.ng\n', this.props.game + " && " + this.state.ng);
 
 		if(this.props.game && this.state.ng === 1){
 			// transition from "begin"(true && 1) to "on"(true && -1)
@@ -165,7 +261,7 @@ class GameBoard extends Component {
 							{
 								this.state.fields.map(() => {
 									return <Field key={ x + '.' + 0 }
-														value={ this.state.fields[x][0] }
+														value={ this.state.fields[0][x] }
 														x={ x !== 3 ? x++ : x = 0 }
 														y={ 0 }/>
 								}) 
@@ -175,7 +271,7 @@ class GameBoard extends Component {
 							{
 								this.state.fields.map(() => {
 									return <Field key={ x + '.' + 1 }
-														value={ this.state.fields[x][1] }
+														value={ this.state.fields[1][x] }
 														x={ x !== 3 ? x++ : x = 0 }
 														y={ 1 }/>
 								}) 
@@ -185,7 +281,7 @@ class GameBoard extends Component {
 							{
 								this.state.fields.map(() => {
 									return <Field key={ x + '.' + 2 }
-														value={ this.state.fields[x][2] }
+														value={ this.state.fields[2][x] }
 														x={ x !== 3 ? x++ : x = 0 }
 														y={ 2 }/>
 								}) 
@@ -195,7 +291,7 @@ class GameBoard extends Component {
 							{
 								this.state.fields.map(() => {
 									return <Field key={ x + '.' + 3 }
-														value={ this.state.fields[x][3] }
+														value={ this.state.fields[3][x] }
 														x={ x !== 3 ? x++ : x = 0 }
 														y={ 3 }/>
 								}) 
