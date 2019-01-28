@@ -17,25 +17,59 @@ function createRandomField() {
 	return field;	
 }
 
+function calcScore(){
+	console.log("GameBoard - calcScore || state.fields", this.state.fields);
+	var i, j,
+			score = 0;
+	for(i = 3; i >= 0; i--) {
+		for(j = 3; j >= 0; j--){
+			score += this.state.fields[i][j];
+		}
+	}
+	return score; 
+}
+
 function handlePressArrow(e) {
 	if(this.props.game && this.state.ng === -1 && e.key.indexOf("Arrow") === 0) {
 		console.log();
 		// console.log("GameBoard - handlePressArrow || oldFields", this.state.fields);
 		console.log("GameBoard - handlePressArrow || e.key: ", e.key);
+		var counter = 0; // temporarily
 		var newFields = this.state.fields.concat();
+
 		moveFields(e.key, newFields);
 		var field = createRandomField();
 
 		while(newFields[field[0]][field[1]] !== 0) {
 			console.log("GameBoard - handlePressArrow || again");
+			if (counter === 1) { // temporarily
+				break;
+			}
 			field = createRandomField();
+			counter++; // temporarily
 		} 
 
-		newFields[field[0]][field[1]] = field[2];
-		console.log("GameBoard - handlePressArrow || newFields", newFields);
-		this.setState({
-			fields: newFields,
-		});
+		// temporarily
+		if(counter === 1) {
+			alert('You lose'); 
+			this.setState({
+				ng: 0,
+				fields: [ 
+								[ 0, 0, 0, 0 ],
+								[ 0, 0, 0, 0 ],
+								[ 0, 0, 0, 0 ],
+								[ 0, 0, 0, 0 ],
+							],	
+			});
+			this.props.endGame();
+		} else {
+			newFields[field[0]][field[1]] = field[2];
+			console.log("GameBoard - handlePressArrow || newFields", newFields);
+			this.setState({
+				fields: newFields,
+			});
+		}
+		this.props.setScore(calcScore());
 	}
 }
 
@@ -59,7 +93,7 @@ function moveFields(direction, fields) {
 					elements.splice(check, 1);
 				}
 			} 
-			console.log("i: ", i, " elements ", elements, " counter ", counter);
+			// console.log("i: ", i, " elements ", elements, " counter ", counter);
 			(counter[i] || elements.length) ? skip[i] = false : skip[i] = true;
 		}
 
@@ -97,7 +131,7 @@ function moveFields(direction, fields) {
 					elements.splice(check, 1);
 				}
 			} 
-			console.log("i: ", i, " elements ", elements, " counter ", counter);
+			// console.log("i: ", i, " elements ", elements, " counter ", counter);
 			(counter[i] || elements.length) ? skip[i] = false : skip[i] = true;
 		}
 
@@ -135,7 +169,7 @@ function moveFields(direction, fields) {
 					elements.splice(check, 1);
 				}
 			} 
-			console.log("i: ", i, " elements ", elements, " counter ", counter);
+			// console.log("i: ", i, " elements ", elements, " counter ", counter);
 			(counter[i] || elements.length) ? skip[i] = false : skip[i] = true;
 		}
 		console.log("skip\n",skip);
@@ -171,7 +205,7 @@ function moveFields(direction, fields) {
 					elements.splice(check, 1);
 				}
 			} 
-			console.log("i: ", i, " elements ", elements, " counter ", counter);
+			// console.log("i: ", i, " elements ", elements, " counter ", counter);
 			(counter[i] || elements.length) ? skip[i] = false : skip[i] = true;
 		}
 
@@ -211,6 +245,7 @@ class GameBoard extends Component {
 							],		
 		};
 		handlePressArrow = handlePressArrow.bind(this);
+		calcScore = calcScore.bind(this);
 
 		document.addEventListener('keydown', handlePressArrow);
 	}

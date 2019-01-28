@@ -13,6 +13,7 @@ class App extends Component {
     };
     this.handleClickGame = this.handleClickGame.bind(this);
     this.getScore = this.getScore.bind(this);
+    this.endGame = this.endGame.bind(this);
   }
 
   handleClickGame() {
@@ -24,7 +25,31 @@ class App extends Component {
   }
 
   getScore(score) {
-    console.log('App - getScore');
+    console.log('App - getScore || score ', score);
+    console.log('App - getScore || state.game ', this.state.game);
+
+    if(this.state.game) {
+      this.setState({
+      currentCount: score,
+      });
+    } else if(!this.state.game && this.state.currentCount > this.state.bestCount) {
+      var current = this.state.currentCount;
+
+      this.setState({
+        currentCount: 0,
+        bestCount: current,
+      });
+    } else if (!this.state.game) {
+      this.setState({
+        currentCount: 0,
+      });
+    }
+  }
+
+  endGame(){
+    this.setState({
+      game: false,
+    })
   }
 
   render() {
@@ -34,11 +59,11 @@ class App extends Component {
           <div className='score-wrap'>
             <div className='score'>
               <span className='score__title'>Current</span>
-              <span className='score__count'>{this.currentCount || 0}</span>
+              <span className='score__count'>{this.state.currentCount || 0}</span>
             </div>
             <div className='score'>
               <span className='score__title'>Best</span>
-              <span className='score__count'>{this.bestCount || 0}</span>
+              <span className='score__count'>{this.state.bestCount || 0}</span>
             </div>
           </div>  
 
@@ -46,7 +71,7 @@ class App extends Component {
         </header>
         
 
-        <GameBoard setScore={ this.getScore } game={ this.state.game }></GameBoard> 
+        <GameBoard setScore={ this.getScore } endGame={this.endGame} game={ this.state.game }></GameBoard> 
       </div>
     );
   }
