@@ -13,43 +13,39 @@ class App extends Component {
     };
     this.handleClickGame = this.handleClickGame.bind(this);
     this.getScore = this.getScore.bind(this);
-    this.endGame = this.endGame.bind(this);
   }
 
   handleClickGame() {
     console.log('App - handleClickGame');
-
+    var game = !this.state.game;
     this.setState({
-      game: true,
+      game: game,
     });
   }
 
   getScore(score) {
     console.log('App - getScore || score ', score);
-    console.log('App - getScore || state.game ', this.state.game);
 
-    if(this.state.game) {
-      this.setState({
-      currentCount: score,
-      });
-    } else if(!this.state.game && this.state.currentCount > this.state.bestCount) {
-      var current = this.state.currentCount;
+    if(score === "win") {
+      alert('You WINNER!!!');
+    } else {
+       if(this.state.game) {
+        this.setState({
+        currentCount: score,
+        });
+      } else if(!this.state.game && this.state.currentCount > this.state.bestCount) {
+        var current = this.state.currentCount;
 
-      this.setState({
-        currentCount: 0,
-        bestCount: current,
-      });
-    } else if (!this.state.game) {
-      this.setState({
-        currentCount: 0,
-      });
+        this.setState({
+          currentCount: 0,
+          bestCount: current,
+        });
+      } else if (!this.state.game) {
+        this.setState({
+          currentCount: 0,
+        });
+      }
     }
-  }
-
-  endGame(){
-    this.setState({
-      game: false,
-    })
   }
 
   render() {
@@ -71,7 +67,7 @@ class App extends Component {
         </header>
         
 
-        <GameBoard setScore={ this.getScore } endGame={this.endGame} game={ this.state.game }></GameBoard> 
+        <GameBoard setScore={ this.getScore } endGame={this.handleClickGame} game={ this.state.game }></GameBoard> 
       </div>
     );
   }

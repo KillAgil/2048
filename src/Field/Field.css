@@ -7,108 +7,62 @@
 	font-weight: bold;
 	color: #f9f6f2; 
 	
-	transition: 0.2s;
-/*	animation: show;
-	-webkit-animation: show;*/
+	transition: 0.3s cubic-bezier(0.39, 0.58, 0.57, 1);;
 }
 
 .game-board__field[value='2'] {
 	background-color: #eee4da;
 	font-size: 55px;
 	color: #776e65;
-	
-	/*transition: 0.5s;*/
-/*	animation-delay: 0.2s;
-	-webkit-animation-delay: 0.2s;*/
 }
 
 .game-board__field[value='4'] {
 	background-color: #ede0c8;
 	font-size: 55px;
 	color: #776e65;
-	
-	/*transition: 0.5s;*/
-/*	animation-delay: 0.2s;
-	-webkit-animation-delay: 0.2s;*/
 }
 
 .game-board__field[value='8'] {
 	background-color: #f2b179;
 	font-size: 55px;
-	
-	/*transition: 0.3s;*/
-/*	animation-delay: 0.1s;
-	-webkit-animation-delay: 0.1s;*/
 }
 
 .game-board__field[value='16'] {
 	background-color: #f59563;
 	font-size: 55px;
-
-	/*transition: 0.3s;*/
-/*	animation-delay: 0.1s;
-	-webkit-animation-delay: 0.1s;*/
 }
 
 .game-board__field[value='32'] {
 	background-color: #f67c5f;
 	font-size: 55px;
-	
-	/*transition: 0.3s;*/
-/*	animation-delay: 0.1s;
-	-webkit-animation-delay: 0.1s;*/
 }
 
 .game-board__field[value='64'] {
 	background-color: #f65e3b;
 	font-size: 55px;
-
-	/*transition: 0.3s;*/
-/*	animation-delay: 0.1s;
-	-webkit-animation-delay: 0.1s;*/
 }
 
 .game-board__field[value='128'] {
 	background-color: #edcf72;
 	font-size: 45px;
-
-	/*transition: 0.3s;*/
-	/*animation-delay: 0.1s;
-	-webkit-animation-delay: 0.1s;*/
 }
 
 .game-board__field[value='256'] {
 	background-color: #edcc61;
 	font-size: 45px;
-
-	/*transition: 0.3s;*/
-	/*animation-delay: 0.1s;
-	-webkit-animation-delay: 0.1s;*/
 }
 
 .game-board__field[value='512'] {
 	background-color: #edc850;
 	font-size: 45px;
-
-	/*transition: 0.3s;*/
-	/*animation-delay: 0.1s;
-	-webkit-animation-delay: 0.1s;*/
 }
 
 .game-board__field[value='1024'] {
 	background-color: #edc53f;
 	font-size: 35px;
-
-	/*transition: 0.3s;*/
-	/*animation-delay: 0.1s;
-	-webkit-animation-delay: 0.1s;*/
 }
 
 .game-board__field[value='2048'] {
 	background-color: #edc22e;
 	font-size: 35px;
-	
-	/*transition: 0.3s;*/
-	/*animation-delay: 0.1s;
-	-webkit-animation-delay: 0.1s;*/
 }

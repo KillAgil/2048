@@ -2,27 +2,46 @@ import React, { Component } from 'react';
 import Field from '../Field/Field.js';
 import './GameBoard.css';
 
-function createRandomField() {
-	var field = []; 
+function createRandomField(foundField) {
+	var field = foundField || []; 
 	var value;
-	var x =  Math.floor(Math.random() * (4 - 0)) + 0;
-	var y =  Math.floor(Math.random() * (4 - 0)) + 0;
+
+	if(!foundField) {
+		var x =  Math.floor(Math.random() * (4 - 0)) + 0;
+		var y =  Math.floor(Math.random() * (4 - 0)) + 0;
+
+		field.push(x, y);
+	}
 
 	(Math.random() * (100 - 1) + 1 < 90) ? value = 2 : value = 4;
 
-	field.push(x, y, value);
+	field.push(value);
 
 	console.log('GameBoard - createRandomField || fields', field);
 
 	return field;	
 }
 
+function findEmptyField(fields) {
+	var i, j;
+	for(i = 3; i >= 0; i--) {
+		for(j = 3; j >= 0; j--){
+			if(!fields[i][j]) {
+				return [i, j];
+			}
+		}
+	}
+	return false;
+}
+
 function calcScore(){
-	console.log("GameBoard - calcScore || state.fields", this.state.fields);
 	var i, j,
 			score = 0;
 	for(i = 3; i >= 0; i--) {
 		for(j = 3; j >= 0; j--){
+			if(this.state.fields[i][j] === 2048) {
+				return "win";
+			}
 			score += this.state.fields[i][j];
 		}
 	}
@@ -35,6 +54,8 @@ function handlePressArrow(e) {
 		// console.log("GameBoard - handlePressArrow || oldFields", this.state.fields);
 		console.log("GameBoard - handlePressArrow || e.key: ", e.key);
 		var counter = 0; // temporarily
+		// i am so sorry for that, but i am laziness think about it 
+		var empty = true;
 		var newFields = this.state.fields.concat();
 
 		moveFields(e.key, newFields);
@@ -42,7 +63,9 @@ function handlePressArrow(e) {
 
 		while(newFields[field[0]][field[1]] !== 0) {
 			console.log("GameBoard - handlePressArrow || again");
-			if (counter === 15) { // temporarily
+			if (counter === 7) { // temporarily
+				empty = findEmptyField(newFields);
+				field = createRandomField(empty);
 				break;
 			}
 			field = createRandomField();
@@ -50,7 +73,7 @@ function handlePressArrow(e) {
 		} 
 
 		// temporarily
-		if(counter === 15) {
+		if(!empty) {
 			alert('You lose'); 
 			this.setState({
 				ng: 0,
@@ -69,7 +92,20 @@ function handlePressArrow(e) {
 				fields: newFields,
 			});
 		}
-		this.props.setScore(calcScore());
+
+		var score = calcScore();
+		this.props.setScore(score);
+		if(score === "win") {
+			this.setState({
+				ng: 0,
+				fields: [ 
+								[ 0, 0, 0, 0 ],
+								[ 0, 0, 0, 0 ],
+								[ 0, 0, 0, 0 ],
+								[ 0, 0, 0, 0 ],
+							],
+			});
+		}
 	}
 }
 
@@ -103,7 +139,7 @@ function moveFields(direction, fields) {
 				continue;
 			}
 			for(j = 3; j >= 0; j--){
-				for(c = 3; c > 0; c--){
+				for(c = 1; c <= 3; c++){
 					current = fields[c][i];
 					if(current && current === fields[c-1][i] && counter[i]) {
 						fields[c][i] = 0;
@@ -141,7 +177,7 @@ function moveFields(direction, fields) {
 				continue;
 			}
 			for(j = 0; j <= 3; j++){
-				for(c = 0; c < 3; c++){
+				for(c = 2; c >= 0; c--){
 					current = fields[c][i];
 					if(current && current === fields[c+1][i] && counter[i]) {
 						fields[c][i] = 0;
@@ -178,7 +214,7 @@ function moveFields(direction, fields) {
 				continue;
 			}
 			for(j = 0; j <= 3; j++){
-				for(c = 0; c < 3; c++){
+				for(c = 2; c >= 0; c--){
 					current = fields[i][c];
 					if(current && current === fields[i][c+1] && counter[i]) {
 						fields[i][c] = 0;
@@ -215,7 +251,7 @@ function moveFields(direction, fields) {
 				continue;
 			}
 			for(j = 3; j >= 0; j--){
-				for(c = 3; c > 0; c--){
+				for(c = 1; c <= 3; c++){
 					current = fields[i][c];
 					if(current && current === fields[i][c-1] && counter[i]) {
 						fields[i][c] = 0;
@@ -246,6 +282,7 @@ class GameBoard extends Component {
 		};
 		handlePressArrow = handlePressArrow.bind(this);
 		calcScore = calcScore.bind(this);
+		findEmptyField = findEmptyField.bind(this);
 
 		document.addEventListener('keydown', handlePressArrow);
 	}
@@ -259,7 +296,7 @@ class GameBoard extends Component {
 				ng: 1,
 			});
 			return false;
-		}
+		} 
 		return true;
 	}
 
@@ -284,6 +321,19 @@ class GameBoard extends Component {
 				ng: -1,
 				fields: fields,
 			});	
+		} else if(!this.props.game && this.state.ng === -1) {
+				this.setState({
+					ng: 1,
+					fields: [ 
+									[ 0, 0, 0, 0 ],
+									[ 0, 0, 0, 0 ],
+									[ 0, 0, 0, 0 ],
+									[ 0, 0, 0, 0 ],
+								],	
+				});
+				console.log('GameBoard - shouldComponentUpdate __ endGame');
+				this.props.endGame();
+				return false;
 		}
 	}
 
